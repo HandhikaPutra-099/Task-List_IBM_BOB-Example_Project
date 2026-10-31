@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Task List</title>
+    <title>Task List — Personal Task Manager</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,32 +14,17 @@
         theme: {
           extend: {
             colors: {
-              primary: {
-                50:  "#eff6ff",
-                100: "#dbeafe",
-                500: "#3b82f6",
-                600: "#2563eb",
-                700: "#1d4ed8",
-              },
-              accent: {
-                400: "#fb923c",
-                500: "#f97316",
-                600: "#ea580c",
-              },
+              primary: { 50:"#eff6ff", 100:"#dbeafe", 500:"#3b82f6", 600:"#2563eb", 700:"#1d4ed8" },
+              accent:  { 400:"#fb923c", 500:"#f97316", 600:"#ea580c" },
             },
-            fontFamily: {
-              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
-            },
+            fontFamily: { sans: ["Inter","ui-sans-serif","system-ui","sans-serif"] },
           },
         },
       };
     </script>
 
     <!-- Google Font: Inter -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css" />
@@ -48,72 +33,122 @@
   <body class="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100 font-sans text-gray-800">
 
     <!-- ===== HEADER ===== -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
-      <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-        <!-- Logo & Title -->
+    <header class="bg-white shadow-sm sticky top-0 z-20">
+      <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
         <div class="flex items-center gap-2">
-          <!-- Clipboard Icon -->
           <svg class="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-          <h1 class="text-xl font-bold text-primary-700 tracking-tight">Task List</h1>
+          <div>
+            <h1 class="text-lg font-bold text-primary-700 leading-none tracking-tight">Task List</h1>
+            <p class="text-xs text-gray-400 leading-none mt-0.5">Personal Task Manager</p>
+          </div>
         </div>
-
-        <!-- Task Counter Badge -->
-        <span id="task-counter" class="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-          0 tasks
-        </span>
+        <button id="open-add-modal-btn"
+          class="flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors duration-150 whitespace-nowrap">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          New Task
+        </button>
       </div>
     </header>
 
-    <!-- ===== MAIN CONTENT ===== -->
-    <main class="max-w-2xl mx-auto px-4 py-8 space-y-6">
+    <!-- ===== MAIN ===== -->
+    <main class="max-w-5xl mx-auto px-4 py-6 space-y-5">
 
-      <!-- Add Task Card -->
-      <section aria-label="Add new task" class="bg-white rounded-2xl shadow-md p-5">
-        <h2 class="text-base font-semibold text-gray-700 mb-3">Add New Task</h2>
-        <form id="task-form" class="flex flex-col sm:flex-row gap-3" novalidate>
-          <input
-            id="task-input"
-            type="text"
-            placeholder="What do you need to do?"
-            maxlength="120"
-            autocomplete="off"
-            class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 transition"
-          />
-          <button
-            type="submit"
-            class="flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 active:bg-primary-700 text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors duration-200 whitespace-nowrap"
-          >
-            <!-- Plus Icon -->
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            Add Task
-          </button>
-        </form>
-        <!-- Inline validation message -->
-        <p id="form-error" class="hidden mt-2 text-xs text-red-500 font-medium">Please enter a task before adding.</p>
+      <!-- ── DASHBOARD ── -->
+      <section aria-label="Dashboard overview" id="dashboard-section">
+        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Overview</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div class="stat-card">
+            <span class="stat-value" id="stat-total">0</span>
+            <span class="stat-label">Total Tasks</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value text-green-500" id="stat-completed">0</span>
+            <span class="stat-label">Completed</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value text-primary-600" id="stat-pending">0</span>
+            <span class="stat-label">Pending</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value text-red-500" id="stat-overdue">0</span>
+            <span class="stat-label">Overdue</span>
+          </div>
+          <div class="stat-card col-span-2 sm:col-span-1">
+            <span class="stat-value text-accent-500" id="stat-duetoday">0</span>
+            <span class="stat-label">Due Today</span>
+          </div>
+        </div>
+        <!-- Progress Bar -->
+        <div class="mt-3 bg-white rounded-2xl shadow-sm p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-gray-600">Overall Progress</span>
+            <span id="progress-label" class="text-xs font-bold text-primary-600">0%</span>
+          </div>
+          <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+            <div id="progress-bar" class="h-2.5 rounded-full bg-gradient-to-r from-primary-500 to-green-400 transition-all duration-500" style="width:0%"></div>
+          </div>
+        </div>
       </section>
 
-      <!-- Filter Tabs & Task List Card -->
+      <!-- ── SEARCH + SORT ── -->
+      <section aria-label="Search and sort" class="flex flex-col sm:flex-row gap-2">
+        <!-- Search -->
+        <div class="relative flex-1">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
+          </svg>
+          <input id="search-input" type="search" placeholder="Search tasks…"
+            class="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder-gray-400 transition" />
+        </div>
+        <!-- Sort -->
+        <div class="relative">
+          <select id="sort-select"
+            class="appearance-none bg-white border border-gray-200 rounded-xl pl-4 pr-9 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 transition cursor-pointer w-full sm:w-auto">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="deadline-asc">Nearest Deadline</option>
+            <option value="deadline-desc">Farthest Deadline</option>
+            <option value="priority-high">Highest Priority</option>
+            <option value="priority-low">Lowest Priority</option>
+          </select>
+          <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </div>
+      </section>
+
+      <!-- ── CATEGORY FILTER ── -->
+      <section aria-label="Filter by category">
+        <div id="category-filter" class="flex flex-wrap gap-2">
+          <button class="cat-chip active-chip" data-category="all">All Categories</button>
+          <button class="cat-chip" data-category="College">College</button>
+          <button class="cat-chip" data-category="Personal">Personal</button>
+          <button class="cat-chip" data-category="Work">Work</button>
+          <button class="cat-chip" data-category="Project">Project</button>
+          <button class="cat-chip" data-category="Organization">Organization</button>
+          <button class="cat-chip" data-category="Other">Other</button>
+        </div>
+      </section>
+
+      <!-- ── STATUS FILTER TABS + TASK LIST ── -->
       <section aria-label="Task list" class="bg-white rounded-2xl shadow-md overflow-hidden">
 
         <!-- Filter Tabs -->
-        <div class="flex border-b border-gray-100 px-2 pt-2" role="tablist" aria-label="Filter tasks">
-          <button role="tab" data-filter="all"       class="filter-tab active-tab" aria-selected="true">All <span id="tab-count-all"       class="tab-count"></span></button>
-          <button role="tab" data-filter="active"    class="filter-tab" aria-selected="false">Active <span id="tab-count-active"    class="tab-count"></span></button>
+        <div class="flex border-b border-gray-100 px-2 pt-2 overflow-x-auto" role="tablist" aria-label="Filter tasks">
+          <button role="tab" data-filter="all"       class="filter-tab active-tab" aria-selected="true">All <span id="tab-count-all" class="tab-count"></span></button>
+          <button role="tab" data-filter="active"    class="filter-tab" aria-selected="false">Active <span id="tab-count-active" class="tab-count"></span></button>
           <button role="tab" data-filter="completed" class="filter-tab" aria-selected="false">Completed <span id="tab-count-completed" class="tab-count"></span></button>
         </div>
 
         <!-- Task Items Container -->
-        <ul id="task-list" class="divide-y divide-gray-50 min-h-[120px]" aria-live="polite" aria-label="Tasks">
-          <!-- Tasks are injected here by script.js -->
-        </ul>
+        <ul id="task-list" class="divide-y divide-gray-50 min-h-[120px]" aria-live="polite" aria-label="Tasks"></ul>
 
         <!-- Empty State -->
         <div id="empty-state" class="hidden flex-col items-center justify-center py-14 text-center px-6">
-          <!-- Empty clipboard illustration -->
           <svg class="w-14 h-14 text-gray-200 mb-4" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 12h6m-3-3v6" />
           </svg>
@@ -121,13 +156,10 @@
           <p id="empty-subtitle" class="text-xs text-gray-300 mt-1">Add a task above to get started.</p>
         </div>
 
-        <!-- Footer: Clear Completed -->
+        <!-- List Footer -->
         <div id="list-footer" class="hidden items-center justify-between px-5 py-3 bg-gray-50 border-t border-gray-100 text-xs text-gray-400">
           <span id="active-count">0 items left</span>
-          <button
-            id="clear-completed-btn"
-            class="hover:text-accent-500 font-medium transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
-          >
+          <button id="clear-completed-btn" class="hover:text-accent-500 font-medium transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed">
             Clear Completed
           </button>
         </div>
@@ -137,28 +169,105 @@
 
     <!-- ===== FOOTER ===== -->
     <footer class="text-center text-xs text-gray-400 py-6">
-      &copy; 2025 Task List &mdash; Built with HTML, Tailwind CSS &amp; Vanilla JS
+      &copy; 2025 Task List &mdash; Personal Task Manager
     </footer>
 
-    <!-- Edit Modal Overlay -->
-    <div id="edit-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4 animate-modal">
-        <h3 id="modal-title" class="text-base font-semibold text-gray-700 mb-4">Edit Task</h3>
-        <input
-          id="edit-input"
-          type="text"
-          maxlength="120"
-          class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 transition mb-4"
-        />
-        <p id="edit-error" class="hidden mb-3 text-xs text-red-500 font-medium">Task cannot be empty.</p>
+    <!-- =========================================================
+         TASK MODAL (Add / Edit)
+         ========================================================= -->
+    <div id="task-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-panel">
+
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between mb-5">
+          <h3 id="modal-title" class="text-base font-bold text-gray-800">New Task</h3>
+          <button id="modal-close-btn" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition" aria-label="Close modal">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Task Name -->
+        <div class="form-group">
+          <label class="form-label" for="modal-task-input">Task Name <span class="text-red-400">*</span></label>
+          <input id="modal-task-input" type="text" maxlength="120" autocomplete="off" placeholder="What do you need to do?"
+            class="form-input" />
+          <p id="modal-form-error" class="hidden mt-1 text-xs text-red-500">Task name is required.</p>
+        </div>
+
+        <!-- Priority + Category row -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="form-group">
+            <label class="form-label" for="modal-priority">Priority</label>
+            <div class="relative">
+              <select id="modal-priority" class="form-select">
+                <option value="high">🔴 High</option>
+                <option value="medium" selected>🟡 Medium</option>
+                <option value="low">🟢 Low</option>
+              </select>
+              <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="modal-category">Category</label>
+            <div class="relative">
+              <select id="modal-category" class="form-select">
+                <option value="College">College</option>
+                <option value="Personal">Personal</option>
+                <option value="Work">Work</option>
+                <option value="Project">Project</option>
+                <option value="Organization">Organization</option>
+                <option value="Other" selected>Other</option>
+              </select>
+              <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deadline -->
+        <div class="form-group">
+          <label class="form-label" for="modal-deadline">Deadline <span class="text-gray-400 font-normal">(optional)</span></label>
+          <input id="modal-deadline" type="date" class="form-input" />
+        </div>
+
+        <!-- Subtasks -->
+        <div class="form-group">
+          <label class="form-label">Subtasks <span class="text-gray-400 font-normal">(optional)</span></label>
+          <!-- Subtask input row -->
+          <div class="flex gap-2 mb-2">
+            <input id="subtask-input" type="text" maxlength="100" placeholder="Add a subtask…" autocomplete="off"
+              class="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder-gray-400 transition" />
+            <button id="subtask-add-btn"
+              class="flex-shrink-0 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold px-3 py-2 rounded-xl transition-colors duration-150">
+              Add
+            </button>
+          </div>
+          <!-- Subtask list (within modal) -->
+          <ul id="modal-subtask-list" class="space-y-1.5 max-h-40 overflow-y-auto"></ul>
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="flex gap-3 justify-end pt-2">
+          <button id="modal-cancel-btn" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 rounded-xl hover:bg-gray-100 transition-colors">Cancel</button>
+          <button id="modal-save-btn"   class="px-5 py-2 text-sm font-semibold bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors">Save Task</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =========================================================
+         DELETE CONFIRM MODAL
+         ========================================================= -->
+    <div id="delete-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+      <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm mx-4 animate-modal">
+        <h3 id="delete-modal-title" class="text-base font-bold text-gray-800 mb-2">Delete Task?</h3>
+        <p class="text-sm text-gray-500 mb-5">This action cannot be undone. The task and all its subtasks will be permanently removed.</p>
         <div class="flex gap-3 justify-end">
-          <button id="edit-cancel-btn" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 rounded-xl hover:bg-gray-100 transition-colors duration-150">Cancel</button>
-          <button id="edit-save-btn"  class="px-5 py-2 text-sm font-semibold bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors duration-150">Save</button>
+          <button id="delete-cancel-btn" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 rounded-xl hover:bg-gray-100 transition-colors">Cancel</button>
+          <button id="delete-confirm-btn" class="px-5 py-2 text-sm font-semibold bg-red-500 hover:bg-red-600 text-white rounded-xl transition-colors">Delete</button>
         </div>
       </div>
     </div>
 
-    <!-- JavaScript -->
     <script src="script.js"></script>
   </body>
 </html>
