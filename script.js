@@ -20,9 +20,9 @@
 // IMPORTANT: Replace these values with your own project credentials.
 // These are the ANON (public) key — safe to expose in frontend code.
 // Never put your service_role key here.
-const SUPABASE_URL  = window.ENV_SUPABASE_URL  || "https://YOUR_PROJECT_REF.supabase.co";
-const SUPABASE_ANON = window.ENV_SUPABASE_ANON || "YOUR_ANON_KEY";
-const VAPID_PUBLIC  = window.ENV_VAPID_PUBLIC  || "YOUR_VAPID_PUBLIC_KEY";
+const SUPABASE_URL  = window.ENV_SUPABASE_URL  || "https://mtzjgmfckwetawjwufcl.supabase.co";
+const SUPABASE_ANON = window.ENV_SUPABASE_ANON || "sb_publishable_dJg7S8ajSDPSSSSl1Hvajw_fe4VSrvt";
+const VAPID_PUBLIC  = window.ENV_VAPID_PUBLIC  || "BCNAiJI1GdNzsP42tIPo5yXCBb91IdB4dTMM6AR4EhpK9EP0eTuRopVAP0dTC1QGwWLO_0YMD9XkzUctat_dU28";
 
 const { createClient } = window.supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -274,7 +274,7 @@ function taskToRow(task, userId) {
     reminder_minutes_before: task.reminderMinutesBefore,
     reminder_at:             remAt,
     // Reset reminder_sent_at to null when reminder settings change (edge function will re-fire)
-    reminder_sent_at:        task.reminderSent ? new Date(task.reminderAt!).toISOString() : null,
+    reminder_sent_at: task.reminderSent ? new Date().toISOString() : null,
   };
 }
 
