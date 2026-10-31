@@ -23,6 +23,9 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png" />
 
+    <!-- Supabase JS client (UMD build — no build step required) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -49,6 +52,105 @@
   </head>
 
   <body class="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100 font-sans text-gray-800">
+
+    <!-- =========================================================
+         AUTH OVERLAY — covers the whole screen until user is logged in
+         ========================================================= -->
+    <div id="auth-overlay" class="auth-overlay" role="main" aria-label="Sign in">
+      <div class="auth-card">
+        <!-- Logo -->
+        <div class="flex items-center justify-center gap-2 mb-6">
+          <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+          <span class="text-2xl font-bold text-primary-700 tracking-tight">Task List</span>
+        </div>
+
+        <!-- Tab switcher — hidden during password reset / email confirm flows -->
+        <div id="auth-tab-switcher" class="flex rounded-xl bg-gray-100 p-1 mb-6" role="tablist">
+          <button id="tab-login"    class="auth-tab active-auth-tab" role="tab" aria-selected="true"  aria-controls="panel-login">Sign In</button>
+          <button id="tab-register" class="auth-tab"                 role="tab" aria-selected="false" aria-controls="panel-register">Create Account</button>
+        </div>
+
+        <!-- ── LOGIN PANEL ── -->
+        <div id="panel-login" role="tabpanel">
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email</label>
+            <input id="login-email" type="email" autocomplete="email" placeholder="you@example.com" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <input id="login-password" type="password" autocomplete="current-password" placeholder="••••••••" class="form-input" />
+          </div>
+          <p id="login-error" class="hidden auth-error"></p>
+          <button id="login-btn" class="auth-submit-btn">Sign In</button>
+          <button id="forgot-btn" class="auth-link-btn mt-2">Forgot password?</button>
+        </div>
+
+        <!-- ── REGISTER PANEL ── -->
+        <div id="panel-register" role="tabpanel" class="hidden">
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Email</label>
+            <input id="reg-email" type="email" autocomplete="email" placeholder="you@example.com" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Password</label>
+            <input id="reg-password" type="password" autocomplete="new-password" placeholder="At least 8 characters" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-password2">Confirm Password</label>
+            <input id="reg-password2" type="password" autocomplete="new-password" placeholder="Repeat password" class="form-input" />
+          </div>
+          <p id="register-error" class="hidden auth-error"></p>
+          <button id="register-btn" class="auth-submit-btn">Create Account</button>
+        </div>
+
+        <!-- ── SET NEW PASSWORD PANEL (password-reset flow) ── -->
+        <div id="panel-reset-password" role="tabpanel" class="hidden">
+          <p class="text-sm text-gray-500 mb-4">Enter and confirm your new password below.</p>
+          <div class="form-group">
+            <label class="form-label" for="reset-password">New Password</label>
+            <input id="reset-password"  type="password" autocomplete="new-password" placeholder="At least 8 characters" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reset-password2">Confirm New Password</label>
+            <input id="reset-password2" type="password" autocomplete="new-password" placeholder="Repeat new password" class="form-input" />
+          </div>
+          <p id="reset-error" class="hidden auth-error"></p>
+          <button id="reset-save-btn" class="auth-submit-btn">Set New Password</button>
+        </div>
+
+        <!-- Global auth status -->
+        <p id="auth-status" class="auth-status hidden"></p>
+
+        <p id="auth-tagline" class="text-center text-xs text-gray-400 mt-5">
+          Your tasks are encrypted and stored securely in the cloud.<br/>
+          Each account is synced across all your devices.
+        </p>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         MIGRATION PROMPT — shown once after first login when
+         LocalStorage tasks are detected
+         ========================================================= -->
+    <div id="migration-banner" class="migration-banner hidden" role="alert" aria-live="polite">
+      <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-start gap-2 min-w-0">
+          <svg class="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+          </svg>
+          <div>
+            <p class="text-sm font-semibold text-gray-800">Import your local tasks?</p>
+            <p class="text-xs text-gray-500 mt-0.5">We found <strong id="migration-count">0</strong> task(s) saved on this device before you had an account.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <button id="migration-import-btn" class="text-xs font-semibold bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">Import Tasks</button>
+          <button id="migration-skip-btn"   class="text-xs font-medium text-gray-500 hover:text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">Skip</button>
+        </div>
+      </div>
+    </div>
 
     <!-- ===== OFFLINE BANNER ===== -->
     <div id="offline-banner" class="offline-banner hidden" role="status" aria-live="polite">
@@ -115,6 +217,12 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
             </svg>
             New Task
+          </button>
+          <!-- User / logout button -->
+          <button id="user-menu-btn" class="user-menu-btn hidden" aria-label="Account menu">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
           </button>
         </div>
       </div>
@@ -237,6 +345,18 @@
     <footer class="text-center text-xs text-gray-400 py-6">
       &copy; 2025 Task List &mdash; Personal Task Manager
     </footer>
+
+    <!-- User dropdown menu -->
+    <div id="user-dropdown" class="user-dropdown hidden" role="menu" aria-label="Account options">
+      <p id="user-email-display" class="user-dropdown-email truncate"></p>
+      <hr class="my-1 border-gray-100" />
+      <button id="logout-btn" class="user-dropdown-item text-red-600 hover:bg-red-50" role="menuitem">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        Sign Out
+      </button>
+    </div>
 
     <!-- =========================================================
          TASK MODAL (Add / Edit)

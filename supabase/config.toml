@@ -1,0 +1,88 @@
+# supabase/config.toml
+# Supabase CLI configuration for local development and Edge Function deployment.
+# https://supabase.com/docs/guides/cli/config
+
+[project]
+# Your Supabase project reference ID — find it in:
+# Supabase Dashboard → Settings → General → Reference ID
+id = "your-project-ref"
+
+[api]
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+port = 54323
+api_url = "http://localhost"
+
+[inbucket]
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
+[storage]
+file_size_limit = "50MiB"
+
+[auth]
+site_url = "http://localhost:3000"
+# Add your Vercel deployment URL here:
+# additional_redirect_urls = ["https://your-app.vercel.app"]
+jwt_expiry = 3600
+enable_email_signup = true
+enable_email_autoconfirm = false  # set true for dev; false for production
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false  # set true in production for email verification
+
+# ─── pg_cron: send-due-reminders every minute ──────────────────────────────
+# After running supabase db push and deploying the Edge Function,
+# execute this SQL in the Supabase Dashboard → SQL Editor:
+#
+#   select cron.schedule(
+#     'send-due-reminders',                           -- job name (unique)
+#     '* * * * *',                                    -- every minute
+#     $$
+#       select net.http_post(
+#         url     := current_setting('app.supabase_url') || '/functions/v1/send-due-reminders',
+#         headers := jsonb_build_object(
+#           'Content-Type',  'application/json',
+#           'Authorization', 'Bearer ' || current_setting('app.cron_secret')
+#         ),
+#         body    := '{}'::jsonb
+#       ) as request_id;
+#     $$
+#   );
+#
+# Prerequisites:
+#   1. Enable pg_cron in Supabase Dashboard → Database → Extensions → pg_cron
+#   2. Enable pg_net in Supabase Dashboard → Database → Extensions → pg_net
+#   3. Set app settings in SQL Editor:
+#      alter database postgres set app.supabase_url = 'https://YOUR_REF.supabase.co';
+#      alter database postgres set app.cron_secret  = 'YOUR_CRON_SECRET';
+#   4. Set the same CRON_SECRET in:
+#      Supabase Dashboard → Edge Functions → send-due-reminders → Secrets
+
+[functions.send-due-reminders]
+# Secrets injected at deploy time — never commit real values here.
+# Set these in: Supabase Dashboard → Edge Functions → Manage Secrets
+# or via: supabase secrets set KEY=VALUE
+#
+# Required secrets:
+#   VAPID_SUBJECT     = "mailto:admin@yourdomain.com"
+#   VAPID_PUBLIC_KEY  = "<your base64url VAPID public key>"
+#   VAPID_PRIVATE_KEY = "<your base64url VAPID private key>"
+#   CRON_SECRET       = "<random strong secret>"
+#
+# Auto-injected by Supabase (do NOT set manually):
+#   SUPABASE_URL
+#   SUPABASE_SERVICE_ROLE_KEY
+verify_jwt = false   # called by pg_cron with Bearer token, not a user JWT

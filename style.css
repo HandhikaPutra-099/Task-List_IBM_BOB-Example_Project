@@ -621,3 +621,158 @@
   .task-item { padding: 0.875rem 0.875rem; }
 }
 
+
+/* ─── AUTH OVERLAY ─────────────────────────────────────────── */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+.auth-overlay.hidden { display: none; }
+
+.auth-card {
+  background: #ffffff;
+  border-radius: 1.25rem;
+  box-shadow: 0 8px 40px rgba(37,99,235,0.12);
+  padding: 2rem 1.75rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Auth tab switcher */
+.auth-tab {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  border: none;
+  border-radius: 0.625rem;
+  background: transparent;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.auth-tab.active-auth-tab {
+  background: #ffffff;
+  color: #2563eb;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.auth-submit-btn {
+  display: block;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #2563eb;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+  margin-top: 0.25rem;
+}
+.auth-submit-btn:hover    { background-color: #1d4ed8; }
+.auth-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.auth-link-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 150ms ease;
+}
+.auth-link-btn:hover { color: #2563eb; }
+
+.auth-error {
+  font-size: 0.8rem;
+  color: #dc2626;
+  background-color: #fee2e2;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.auth-status {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #16a34a;
+  background-color: #dcfce7;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.75rem;
+}
+
+/* ─── MIGRATION BANNER ─────────────────────────────────────── */
+.migration-banner {
+  background-color: #eff6ff;
+  border-bottom: 1px solid #bfdbfe;
+  position: relative;
+  z-index: 25;
+}
+
+/* ─── USER MENU BUTTON (header) ────────────────────────────── */
+.user-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1.5px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease;
+  flex-shrink: 0;
+}
+.user-menu-btn:hover { border-color: #2563eb; color: #2563eb; }
+
+/* ─── USER DROPDOWN ────────────────────────────────────────── */
+.user-dropdown {
+  position: fixed;
+  top: 3.75rem;
+  right: 1rem;
+  z-index: 50;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.875rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+  min-width: 200px;
+  padding: 0.5rem;
+  animation: modalIn 150ms ease forwards;
+}
+.user-dropdown-email {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+  max-width: 180px;
+}
+.user-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.625rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+  text-align: left;
+}
+
