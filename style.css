@@ -1,0 +1,205 @@
+/* ============================================================
+   style.css — Task List App
+   Supplementary styles for elements that benefit from
+   custom CSS beyond Tailwind utility classes.
+   ============================================================ */
+
+/* ---- Filter Tab Component --------------------------------- */
+.filter-tab {
+  position: relative;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;          /* gray-500 */
+  border-radius: 0.5rem 0.5rem 0 0;
+  transition: color 150ms ease, background-color 150ms ease;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.filter-tab:hover {
+  color: #2563eb;           /* primary-600 */
+  background-color: #eff6ff; /* primary-50 */
+}
+
+/* Active tab — blue underline accent */
+.filter-tab.active-tab {
+  color: #2563eb;           /* primary-600 */
+  font-weight: 600;
+}
+
+.filter-tab.active-tab::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;             /* sits on top of the card border */
+  left: 0.75rem;
+  right: 0.75rem;
+  height: 2px;
+  background-color: #f97316; /* accent-500 — orange underline */
+  border-radius: 9999px;
+}
+
+/* ---- Tab Count Badge -------------------------------------- */
+.tab-count {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #9ca3af;           /* gray-400 — muted by default */
+  transition: color 150ms ease;
+}
+
+.filter-tab.active-tab .tab-count {
+  color: #f97316;           /* accent-500 — matches the orange underline */
+}
+
+/* ---- Task Item -------------------------------------------- */
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  transition: background-color 150ms ease;
+}
+
+.task-item:hover {
+  background-color: #f9fafb; /* gray-50 */
+}
+
+/* Completed task — strikethrough + muted text */
+.task-item.completed .task-text {
+  text-decoration: line-through;
+  color: #9ca3af;           /* gray-400 */
+}
+
+/* ---- Custom Checkbox -------------------------------------- */
+.task-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  border: 2px solid #d1d5db;  /* gray-300 */
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border-color 200ms ease, background-color 200ms ease;
+  position: relative;
+  background-color: #fff;
+}
+
+.task-checkbox:hover {
+  border-color: #3b82f6;    /* primary-500 */
+}
+
+.task-checkbox:checked {
+  background-color: #22c55e; /* green-500 */
+  border-color: #22c55e;
+}
+
+/* Checkmark inside the circle */
+.task-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 5px;
+  height: 9px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+/* ---- Task Text -------------------------------------------- */
+.task-text {
+  flex: 1;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #374151;           /* gray-700 */
+  word-break: break-word;
+  transition: color 200ms ease, text-decoration 200ms ease;
+}
+
+/* ---- Action Buttons (Edit / Delete) ----------------------- */
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 0;               /* hidden by default; shown on row hover */
+  transition: opacity 150ms ease, background-color 150ms ease, color 150ms ease;
+}
+
+.task-item:hover .action-btn {
+  opacity: 1;
+}
+
+.action-btn.edit-btn {
+  color: #6b7280;
+}
+.action-btn.edit-btn:hover {
+  background-color: #dbeafe; /* primary-100 */
+  color: #2563eb;
+}
+
+.action-btn.delete-btn {
+  color: #6b7280;
+}
+.action-btn.delete-btn:hover {
+  background-color: #fee2e2; /* red-100 */
+  color: #ef4444;
+}
+
+/* ---- Edit Modal Overlay ----------------------------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.45); /* dark translucent backdrop */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  backdrop-filter: blur(2px);
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+/* Modal entrance animation */
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-modal {
+  animation: modalIn 180ms ease forwards;
+}
+
+/* ---- Task item enter animation ---------------------------- */
+@keyframes taskIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.task-enter {
+  animation: taskIn 200ms ease forwards;
+}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task List</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Tailwind Config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50:  "#eff6ff",
+                100: "#dbeafe",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
+              },
+              accent: {
+                400: "#fb923c",
+                500: "#f97316",
+                600: "#ea580c",
+              },
+            },
+            fontFamily: {
+              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Google Font: Inter -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body class="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100 font-sans text-gray-800">
+
+    <!-- ===== HEADER ===== -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+      <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-2">
+          <!-- Clipboard Icon -->
+          <svg class="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          <h1 class="text-xl font-bold text-primary-700 tracking-tight">Task List</h1>
+        </div>
+
+        <!-- Task Counter Badge -->
+        <span id="task-counter" class="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+          0 tasks
+        </span>
+      </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="max-w-2xl mx-auto px-4 py-8 space-y-6">
+
+      <!-- Add Task Card -->
+      <section aria-label="Add new task" class="bg-white rounded-2xl shadow-md p-5">
+        <h2 class="text-base font-semibold text-gray-700 mb-3">Add New Task</h2>
+        <form id="task-form" class="flex flex-col sm:flex-row gap-3" novalidate>
+          <input
+            id="task-input"
+            type="text"
+            placeholder="What do you need to do?"
+            maxlength="120"
+            autocomplete="off"
+            class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 transition"
+          />
+          <button
+            type="submit"
+            class="flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 active:bg-primary-700 text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors duration-200 whitespace-nowrap"
+          >
+            <!-- Plus Icon -->
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Add Task
+          </button>
+        </form>
+        <!-- Inline validation message -->
+        <p id="form-error" class="hidden mt-2 text-xs text-red-500 font-medium">Please enter a task before adding.</p>
+      </section>
+
+      <!-- Filter Tabs & Task List Card -->
+      <section aria-label="Task list" class="bg-white rounded-2xl shadow-md overflow-hidden">
+
+        <!-- Filter Tabs -->
+        <div class="flex border-b border-gray-100 px-2 pt-2" role="tablist" aria-label="Filter tasks">
+          <button role="tab" data-filter="all"       class="filter-tab active-tab" aria-selected="true">All <span id="tab-count-all"       class="tab-count"></span></button>
+          <button role="tab" data-filter="active"    class="filter-tab" aria-selected="false">Active <span id="tab-count-active"    class="tab-count"></span></button>
+          <button role="tab" data-filter="completed" class="filter-tab" aria-selected="false">Completed <span id="tab-count-completed" class="tab-count"></span></button>
+        </div>
+
+        <!-- Task Items Container -->
+        <ul id="task-list" class="divide-y divide-gray-50 min-h-[120px]" aria-live="polite" aria-label="Tasks">
+          <!-- Tasks are injected here by script.js -->
+        </ul>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden flex-col items-center justify-center py-14 text-center px-6">
+          <!-- Empty clipboard illustration -->
+          <svg class="w-14 h-14 text-gray-200 mb-4" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 12h6m-3-3v6" />
+          </svg>
+          <p id="empty-title" class="text-sm font-semibold text-gray-400">No tasks here yet</p>
+          <p id="empty-subtitle" class="text-xs text-gray-300 mt-1">Add a task above to get started.</p>
+        </div>
+
+        <!-- Footer: Clear Completed -->
+        <div id="list-footer" class="hidden items-center justify-between px-5 py-3 bg-gray-50 border-t border-gray-100 text-xs text-gray-400">
+          <span id="active-count">0 items left</span>
+          <button
+            id="clear-completed-btn"
+            class="hover:text-accent-500 font-medium transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Clear Completed
+          </button>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="text-center text-xs text-gray-400 py-6">
+      &copy; 2025 Task List &mdash; Built with HTML, Tailwind CSS &amp; Vanilla JS
+    </footer>
+
+    <!-- Edit Modal Overlay -->
+    <div id="edit-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4 animate-modal">
+        <h3 id="modal-title" class="text-base font-semibold text-gray-700 mb-4">Edit Task</h3>
+        <input
+          id="edit-input"
+          type="text"
+          maxlength="120"
+          class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 transition mb-4"
+        />
+        <p id="edit-error" class="hidden mb-3 text-xs text-red-500 font-medium">Task cannot be empty.</p>
+        <div class="flex gap-3 justify-end">
+          <button id="edit-cancel-btn" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 rounded-xl hover:bg-gray-100 transition-colors duration-150">Cancel</button>
+          <button id="edit-save-btn"  class="px-5 py-2 text-sm font-semibold bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors duration-150">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+  </body>
+</html>
